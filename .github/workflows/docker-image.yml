@@ -15,7 +15,13 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@v3
-    - name: Build the InstaAPI docker image
-      run: docker build . --file ./Dockerfile --tag ghcr.io/svenlie/instagrapi:${GITHUB_REF##*/} --tag ghcr.io/svenlie/instagrapi:latest
-    - name: Push InstaAPI docker images
-      run: docker push ghcr.io/svenlie/instagrapi --all-tags
+    - name: Build and push the InstaAPI docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        file: ./Dockerfile
+        tags: | 
+          ghcr.io/svenlie/instagrapi:${{ github.ref_name }}
+          ghcr.io/svenlie/instagrapi:latest
